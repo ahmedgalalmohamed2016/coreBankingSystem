@@ -1,6 +1,5 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const config = require('./configs/main');
 const path = require('path');
 
 const merchant = require('./routes/merchant.route');
@@ -12,7 +11,7 @@ const walletRoutes = require('./routes/wallet.route');
 const app = express();
 // Set up mongoose connection
 const mongoose = require('mongoose');
-// let dev_db_url = 'mongodb://admin:Hidden123@ds119129.mlab.com:19129/hiddenholidaystable';
+let dev_db_url = 'mongodb://admin:umv9wsPsP4HZ3nqk@ds263638.mlab.com:63638/corebankingsystem';
 
 const mongoDB = process.env.MONGODB_URI || dev_db_url;
 const options = {
