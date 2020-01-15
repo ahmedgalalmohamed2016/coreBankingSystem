@@ -12,8 +12,7 @@ const walletRoutes = require('./routes/wallet.route');
 const app = express();
 // Set up mongoose connection
 const mongoose = require('mongoose');
-// let dev_db_url = 'mongodb://admin:2wGnLj9ayKfeZLCQaVgy5WvBW4nuQemsy977BvdbJykmjq4c@ds045679.mlab.com:45679/hiddenholidaydb';
-let dev_db_url = 'mongodb://admin:Hidden123@ds119129.mlab.com:19129/hiddenholidaystable';
+// let dev_db_url = 'mongodb://admin:Hidden123@ds119129.mlab.com:19129/hiddenholidaystable';
 
 const mongoDB = process.env.MONGODB_URI || dev_db_url;
 const options = {
