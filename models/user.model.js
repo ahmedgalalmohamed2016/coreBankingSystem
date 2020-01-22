@@ -3,11 +3,12 @@ const Schema = mongoose.Schema;
 const _ = require('../configs/validation');
 
 let UserSchema = new Schema({
-    userNumber: { type: String, unique: true, required: [true, 'user number is required'] },
+    mappingId: { type: String, required: true },
     role: { type: String, required: true },
-    firstName: { type: String, },
-    lastName: { type: String, },
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
     address: { type: String },
+    userNumber: { type: String }, // 234fewnfj4 readable code for helping support team
     email: { type: String },
     mobileNumber: { type: String, unique: true },
     gender: { type: String },
