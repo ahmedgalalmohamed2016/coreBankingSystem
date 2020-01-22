@@ -6,7 +6,6 @@ const merchant = require('./routes/merchant.route');
 const userRoutes = require('./routes/user.route');
 const transactionRoutes = require('./routes/transaction.route');
 const cardRoutes = require('./routes/card.route');
-const walletRoutes = require('./routes/wallet.route');
 
 const app = express();
 // Set up mongoose connection
@@ -46,7 +45,7 @@ app.use('/merchants', merchant);
 app.use('/user', userRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/cards', cardRoutes);
-app.use('/api/wallet', walletRoutes);
+
 
 let port = 3000;
 
