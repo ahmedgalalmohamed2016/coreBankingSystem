@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const _ = require('../configs/validation');
 
 let UserSchema = new Schema({
     mappingId: { type: String, required: true },
