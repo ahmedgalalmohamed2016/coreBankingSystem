@@ -5,6 +5,10 @@ const CardController = require('../controllers/card.controller');
 const MerchantController = require('../controllers/merchant.controller');
 const UserController = require('../controllers/user.controller');
 
-// router.post('/transaction/add', middleware.mainAuth, TransactionController.add);
+const middleware = require('../middleware/auth');
+
+ router.get('/merchant', MerchantController.welcome);
+
+ router.post('/merchant/create', MerchantController.createMerchant);
 
 module.exports = router;

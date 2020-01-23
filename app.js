@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 
-const merchant = require('./routes/merchant.route');
+const merchantRoutes = require('./routes/merchant.route');
 const userRoutes = require('./routes/user.route');
 const transactionRoutes = require('./routes/transaction.route');
 const cardRoutes = require('./routes/card.route');
@@ -10,9 +10,9 @@ const cardRoutes = require('./routes/card.route');
 const app = express();
 // Set up mongoose connection
 const mongoose = require('mongoose');
-let dev_db_url = 'mongodb://admin:umv9wsPsP4HZ3nqk@ds263638.mlab.com:63638/corebankingsystem';
+let dev_db_url = ('mongodb://localhost:27017/coreBank');
 
-const mongoDB = process.env.MONGODB_URI || dev_db_url;
+const mongoDB = dev_db_url;
 const options = {
     keepAlive: 1,
     useNewUrlParser: true,
@@ -27,12 +27,13 @@ const options = {
 mongoose.connect(mongoDB, options);
 mongoose.Promise = global.Promise;
 const db = mongoose.connection;
+
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
     res.setHeader('Access-Control-Allow-Credentials', true);
 
@@ -41,11 +42,11 @@ app.use(function(req, res, next) {
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use('/merchants', merchant);
+
+app.use('/merchants', merchantRoutes);
 app.use('/user', userRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/cards', cardRoutes);
-
 
 let port = 3000;
 

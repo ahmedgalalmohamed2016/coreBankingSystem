@@ -12,6 +12,6 @@ let UserSchema = new Schema({
     mobileNumber: { type: String, unique: true },
     gender: { type: String },
     country: { type: String, required: true },
-    merchant: { type: mongoose.Schema.Types.ObjectId, ref: 'Merchant' },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'Merchant' },
 });
 module.exports = mongoose.model('User', UserSchema);

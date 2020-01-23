@@ -1,16 +1,18 @@
-const merchant = require('../models/merchant.model');
-const UserModel = require('../models/user.model');
-const CardModel = require('../models/card.model');
-const TransactionModel = require('../models/transaction.model');
+
+
 const _ = require("lodash");
 const request = require("superagent");
 var fs = require("fs");
 const mongoose = require('mongoose');
+const merchantService = require('../services/merchantService');
+exports.welcome = async (req, res) => {
+    return res.send({ statusCode: 200, message: "success", data: {} });
+}
 
-exports.add = async(req, res) => {
-    try {
-        return res.send("Can not add this card.");
-    } catch (err) {
-        return res.send("Can not add this card.");
-    }
+exports.createMerchant = async (req, res) => {
+    merchantService.createMerchant(req, function (err, resualt) {
+        if (err)
+            return res.send({ statusCode: 400, message: err })
+        return res.send({ statusCode: 200, message: "success", data: resualt });
+    })
 }
