@@ -3,6 +3,7 @@ exports.require = {
         firstName: true,
         lastName: true,
         address: true,
+        userName: true,
         email: false,
         mobileNumber: true,
         gender: true,
@@ -17,5 +18,8 @@ exports.require = {
         contactPerson: false,
         homapageDesc: false,
         bio: false,
+    },
+    "merchants_merchant_list": {
+        pageNum: true,
     }
 }

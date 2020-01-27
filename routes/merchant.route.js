@@ -11,5 +11,6 @@ const middleware = require('../middleware/auth');
  router.get('/merchant', MerchantController.welcome);
 
  router.post('/merchant/create', validationSystem, MerchantController.createMerchant);
+ router.post('/merchant/list', validationSystem, MerchantController.merchantList);
 
 module.exports = router;

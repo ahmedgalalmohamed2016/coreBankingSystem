@@ -1,6 +1,8 @@
 exports.validationRgex = {
     firstName: /^[_ a-zA-Z]{3,36}$/,
     lastName: /^[_ a-zA-Z]{3,36}$/,
+    userName: /^[_ a-zA-Z]{3,36}$/,
+    password: /^[_ a-zA-Z]{3,36}$/,
     address: /^.{3,300}$/,
     email: /^[_a-zA-Z0-9-]+(\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]*\.([a-zA-Z]{2,4})$/,
     mobileNumber: /^[0-9]{7,15}/,
@@ -17,4 +19,5 @@ exports.validationRgex = {
     contactPerson: /^[_ a-zA-Z]{3,300}$/,
     homapageDesc: /^[_ a-zA-Z]{3,300}$/,
     bio: /^[_ a-zA-Z]{3,300}$/,
+    pageNum:/^[0-9]{1,50}$/
 }
