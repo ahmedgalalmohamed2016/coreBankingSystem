@@ -1,16 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const TransactionController = require('../controllers/transaction.controller');
-const CardController = require('../controllers/card.controller');
 const MerchantController = require('../controllers/merchant.controller');
-const UserController = require('../controllers/user.controller');
 const validationSystem = require('../middleware/validation').validationSystem;
 
-const middleware = require('../middleware/auth');
+const middlewareAuth = require('../middleware/auth');
 
- router.get('/merchant', MerchantController.welcome);
+ router.get('/welcome', MerchantController.welcome);
 
- router.post('/merchant/create', validationSystem, MerchantController.createMerchant);
- router.post('/merchant/list', validationSystem, MerchantController.merchantList);
+ router.post('/create', validationSystem, MerchantController.createMerchant);
+ router.post('/list', validationSystem, MerchantController.merchantList);
+ router.post('/transaction/settled', validationSystem, MerchantController.settled);
+ router.post('/transaction/archived', validationSystem, MerchantController.archived);
 
 module.exports = router;

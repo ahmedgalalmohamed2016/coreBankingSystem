@@ -1,16 +1,16 @@
-const merchant = require('../models/merchant.model');
-const UserModel = require('../models/user.model');
-const CardModel = require('../models/card.model');
-const TransactionModel = require('../models/transaction.model');
-const _ = require("lodash");
-const request = require("superagent");
-var fs = require("fs");
-const mongoose = require('mongoose');
+const cardService = require('../services/cardService');
 
-exports.add = async(req, res) => {
-    try {
-        return res.send("Can not add this card.");
-    } catch (err) {
-        return res.send("Can not add this card.");
-    }
+exports.addCard = async(req, res) => {
+    cardService.addCard(req, function (err, resualt) {
+        if (err)
+            return res.send(err)
+        return res.send(resualt);
+    })
+}
+exports.list = async(req, res) => {
+    cardService.list(req, function (err, resualt) {
+        if (err)
+            return res.send(err)
+        return res.send(resualt);
+    })
 }

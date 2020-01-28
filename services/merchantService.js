@@ -9,7 +9,7 @@ const TransactionModel = require('../models/transaction.model');
 //end of database tables-------------------------
 
 const helperFunction = require('../services/helperFunctions');
-const defaultValue = require('../config/defaultValues');
+const defaultValue = require('../config/defaultValues').values;
 
 module.exports.createMerchant =
     function (req, callback) {
@@ -112,10 +112,10 @@ module.exports.merchantList =
             },
             function (cb) {
                 console.log(resultData.pageNum);
-                
+
                 merchantModel.find({}).sort("createdAt DESC")
-                    .skip(resultData.pageNum* 10)
-                    .limit(10)
+                    .skip(resultData.pageNum * defaultValue.limit)
+                    .limit(defaultValue.limit)
                     .exec(function (err, res) {
                         if (err || !res)
                             return cb("error in finding merchant !")
@@ -131,6 +131,50 @@ module.exports.merchantList =
                         resultData.count = res;
                         return cb(null);
                     })
+            }
+        ],
+            function (err) {
+                if (err)
+                    return callback(err)
+                return callback(null, resultData);
+            });
+    }
+module.exports.getTransaction =
+    function (req, callback) {
+        var resultData = {};
+        async.series([
+            function (cb) {
+                try {
+                    resultData.pageNum = req.body.pageNum ? parseInt(req.body.pageNum) : 0
+                } catch (err) {
+                    resultData.pageNum = 0;
+                }
+
+                return cb(null);
+            },
+            function (cb) {
+                resultData.whereQuery = req.from == "settled" ? { settled: false } : { isArchived: true };
+                resultData.whereQuery.from_userId = req.body.merchantId;
+                TransactionModel.find(resultData.whereQuery)
+                    .sort("createdAt DESC")
+                    .skip(resultData.pageNum * defaultValue.limit)
+                    .limit(defaultValue.limit)
+                    .exec(function (err, res) {
+                        if (err || !res)
+                            return cb("error in finding merchant !")
+                        resultData.transactionList = res
+                        return cb(null);
+                    })
+            },
+            function (cb) {
+
+                TransactionModel.count(resultData.whereQuery).exec(function (err, res) {
+                    if (err || !res)
+                        return cb("error in finding merchant !")
+                    resultData.count = res;
+                    delete resultData.whereQuery;
+                    return cb(null);
+                })
             }
         ],
             function (err) {

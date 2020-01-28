@@ -6,6 +6,7 @@ const merchantRoutes = require('./routes/merchant.route');
 const userRoutes = require('./routes/user.route');
 const transactionRoutes = require('./routes/transaction.route');
 const cardRoutes = require('./routes/card.route');
+const statusError = require('./config/statusError');
 
 const app = express();
 // Set up mongoose connection
@@ -30,7 +31,7 @@ const db = mongoose.connection;
 
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
@@ -39,17 +40,23 @@ app.use(function(req, res, next) {
 
     next();
 });
-
+// try {
+//     app.use(bodyParser.json());
+//     app.use(bodyParser.urlencoded({ extended: true }));
+// } catch (err) {
+//     res.send({ statusCode: statusError.statusCode.methodNotAllowed, message: "please enter valid Json" })
+// }
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
 app.use('/merchants', merchantRoutes);
 app.use('/user', userRoutes);
-app.use('/api/transactions', transactionRoutes);
-app.use('/api/cards', cardRoutes);
+app.use('/transactions', transactionRoutes);
+app.use('/cards', cardRoutes);
 
 let port = 3000;
 
 app.listen(port, () => {
+    console.log('*******************************************************');
     console.log('Server is up and running on port numner ' + port);
+    console.log('*******************************************************');
 });

@@ -1,11 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const TransactionController = require('../controllers/transaction.controller');
 const CardController = require('../controllers/card.controller');
-const MerchantController = require('../controllers/merchant.controller');
-const UserController = require('../controllers/user.controller');
+const validationSystem = require('../middleware/validation').validationSystem;
 
-
-// router.post('/transaction/add', middleware.mainAuth, TransactionController.add);
+router.post('/add', validationSystem, CardController.addCard);
+router.post('/list', validationSystem, CardController.list);
 
 module.exports = router;

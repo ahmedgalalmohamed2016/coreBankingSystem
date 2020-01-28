@@ -21,3 +21,19 @@ exports.merchantList = async (req, res) => {
         return res.send({ statusCode: statusCode.oK, message: "success", data: resualt });
     })
 }
+exports.settled = async (req, res) => {
+    req.from ="settled";
+    merchantService.getTransaction(req, function (err, resualt) {
+        if (err)
+            return res.send({ statusCode: statusCode.badRequest, message: err })
+        return res.send({ statusCode: statusCode.oK, message: "success", data: resualt });
+    })
+}
+exports.archived = async (req, res) => {
+    req.from ="isArchived";
+    merchantService.getTransaction(req, function (err, resualt) {
+        if (err)
+            return res.send({ statusCode: statusCode.badRequest, message: err })
+        return res.send({ statusCode: statusCode.oK, message: "success", data: resualt });
+    })
+}

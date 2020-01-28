@@ -15,7 +15,8 @@ let TransactionSchema = new Schema({
     comment: { type: String },
     paymentMethod: { type: String, required: true }, //card
     code: { type: String, required: true }, // transaction code come from our backend request
-    isArchived: { type: Boolean, required: true, default: false }
+    isArchived: { type: Boolean, required: true, default: false },
+    settled: { type: Boolean, required: true, default: false }
 });
 
 

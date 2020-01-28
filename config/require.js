@@ -1,5 +1,5 @@
 exports.require = {
-    "merchants_merchant_create": {
+    "merchants_create": {
         firstName: true,
         lastName: true,
         address: true,
@@ -19,7 +19,43 @@ exports.require = {
         homapageDesc: false,
         bio: false,
     },
-    "merchants_merchant_list": {
+    "merchants_list": {
         pageNum: true,
+    },
+    "merchants_transaction_settled": {
+        pageNum: true,
+        merchantId:true
+    },
+    "merchants_transaction_archived": {
+        pageNum: true,
+        merchantId:true
+    },
+    "cards_add": {
+        userId: true,
+        cardNum: true,
+        expireMonth: true,
+        expireYear: true,
+        holderName: true,
+        csv: true,
+    },
+    "cards_list": {
+        userId: true,
+        pageNum: true,
+    },
+    "transactions_create": {
+        fromId: true,
+        toId: true,
+        cardId: true,
+        amount: true,
+        currency: true,
+        status: true,
+        sourceType: true,
+        sourceId: true,
+        sourceData: true,
+        comment: false,
+        paymentMethod: true,
+        code: true,
+        isArchived: true,
+        settled: true
     }
 }
