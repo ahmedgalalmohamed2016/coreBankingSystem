@@ -1,10 +1,7 @@
 const async = require('async');
 const mongoose = require('mongoose');
 //database tables--------------------------------
-const merchantModel = require('../models/merchant.model');
-const UserModel = require('../models/user.model');
-const CardModel = require('../models/card.model');
-const TransactionModel = require('../models/transaction.model');
+const mssql = require('mssql');
 //end of database tables-------------------------
 const statusCode = require('../config/statusError').statusCode;
 
@@ -13,24 +10,10 @@ module.exports.create =
         var resultData = {};
         async.series([
             function (cb) {
-                TransactionModel.create({
-                    creationDate: new Date(),
-                    from_userId: req.body.fromId,
-                    to_userId: req.body.toId,
-                    cardId: req.body.cardId,
-                    amount: req.body.amount,
-                    currency: req.body.currency,
-                    status: req.body.status,
-                    sourceType: req.body.sourceType,
-                    sourceId: req.body.sourceId,
-                    sourceData: req.body.sourceData,
-                    comment: req.body.comment || "",
-                    paymentMethod: req.body.paymentMethod,
-                    code: req.body.code,
-                    isArchived: req.body.isArchived,
-                    settled: req.body.settled
-                },
-                    function (err, res) {
+                const request = new mssql.Request()
+                request.query(
+                    request.template`INSERT INTO transaction (creationDate,from_userId,to_userId,cardId,amount,currency,status,sourceType,sourceId,sourceData,comment,paymentMethod,code,isArchived,settled) VALUES (${new Date()},${req.body.fromId},${req.body.toId},${req.body.cardId},${req.body.amount},${req.body.currency},${req.body.status},${req.body.sourceType},${req.body.sourceId},${req.body.sourceData},${req.body.comment || ""},${req.body.paymentMethod},${req.body.code},${req.body.isArchived},${req.body.settled})`,
+                   function (err, res) {
                         if (err || !res)
                             return cb({ statusCode: statusCode.badRequest, message: "cannot create transaction !" });
                         resultData.transactionData = res;

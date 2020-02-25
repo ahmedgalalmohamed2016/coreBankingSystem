@@ -2,14 +2,11 @@ const async = require('async');
 const mongoose = require('mongoose');
 const uuidv4 = require('uuid/v4');
 //database tables--------------------------------
-const merchantModel = require('../models/merchant.model');
-const UserModel = require('../models/user.model');
-const CardModel = require('../models/card.model');
-const TransactionModel = require('../models/transaction.model');
+const mssql = require('mssql');
 //end of database tables-------------------------
 
 const helperFunction = require('../services/helperFunctions');
-const defaultValue = require('../config/defaultValues');
+const defaultValue = require('../config/defaultValues').values;
 const statusCode = require('../config/statusError').statusCode;
 
 module.exports.addCard =
@@ -17,13 +14,16 @@ module.exports.addCard =
         var resultData = { newUser: false, newMerchant: false };
         async.series([
             function (cb) {
-                UserModel.findOne({ userId: req.body.userId },
+                const request = new mssql.Request()
+                request.query(
+                    request.template`select * from userData where userId=${req.body.userId}`,
                     function (err, res) {
                         if (err || !res)
                             return cb({ statusCode: statusCode.badRequest, message: "cannot find user data with this id !" });
                         resultData.userData = res;
                         return cb(null);
                     })
+                
             },
             function (cb) {
                 resultData.savedCardNum = helperFunction.cardSecure(req.body.cardNum);
@@ -47,40 +47,37 @@ module.exports.addCard =
                 return cb(null);
             },
             function (cb) {
-                CardModel.find({
-                    cardNumber: resultData.savedCardNum
-                }, function (err, res) {
-                    if (err)
-                        return cb({ statusCode: statusCode.badRequest, message: "cannot find card for this user" });
-                    if (res.length >= 1)
-                        return cb({ statusCode: statusCode.created, message: "this user already have the same card" });
-                    return cb(null);
-                })
+                const request = new mssql.Request()
+                request.query(
+                    request.template`select * from card where encCardnumber=${req.body.cardNum}`,
+                    function (err, res) {
+                        if (err)
+                            return cb({ statusCode: statusCode.badRequest, message: "cannot find card for this user" });
+                        if (res.length >= 1)
+                            return cb({ statusCode: statusCode.created, message: "this user already have the same card" });
+                        return cb(null);
+                    })
             },
             function (cb) {
-                CardModel.create({
-                    creationDate: new Date(),
-                    userId: req.body.userId,
-                    cardNumber: resultData.savedCardNum,
-                    encCardnumber: resultData.encCardnumber,
-                    expireMonth: req.body.expireMonth,
-                    expireYear: req.body.expireYear,
-                    holderName: req.body.holderName,
-                    isDeleted: false
-                },
+                const request = new mssql.Request()
+                request.query(
+                    request.template`INSERT INTO card (creationDate,userId,cardNumber,encCardnumber,expireMonth,expireYear,holderName,isDeleted) VALUES (${new Date()},${req.body.userId},${req.body.cardNum},${resultData.encCardnumber},${req.body.expireMonth},${req.body.expireYear},${req.body.holderName},${false})`,
                     function (err, res) {
+                        console.log(err);
+                        
                         if (err || !res)
                             return cb({ statusCode: statusCode.badRequest, message: "cannot create card for this user" });
                         resultData = res;
 
                         return cb(null);
                     })
+                
             },
         ],
             function (err) {
                 if (err)
                     return callback({ statusCode: err.statusCode, message: err.message });
-                return callback(null, { statusCode: resultData.statusCode, message: resultData.message, data: resultData });
+                return callback(null, { statusCode: resultData.statusCode, message: resultData.message, data: {} });
             });
     }
 
@@ -89,6 +86,7 @@ module.exports.list =
         var resultData = {};
         async.series([
             function (cb) {
+               
                 try {
                     resultData.pageNum = req.body.pageNum ? parseInt(req.body.pageNum) : 0
                 } catch (err) {
@@ -98,25 +96,28 @@ module.exports.list =
                 return cb(null);
             },
             function (cb) {
-                CardModel.find({ userId: req.body.userId })
-                    .sort("createdAt DESC")
-                    .skip(resultData.pageNum * defaultValue.limit)
-                    .limit(defaultValue.limit)
-                    .exec(function (err, res) {
+                const request = new mssql.Request()
+                request.query(
+                    request.template`DECLARE @PageNumber AS INT, @RowspPage AS INT SET @PageNumber = ${resultData.pageNum} SET @RowspPage = ${defaultValue.limit} SELECT * FROM card where userId = ${req.body.userId} ORDER BY creationDate DESC OFFSET ((@PageNumber) * @RowspPage) ROWS FETCH NEXT @RowspPage ROWS ONLY`,
+                    function (err, res) {
                         if (err || !res)
                             return cb({ statusCode: statusCode.badRequest, message: "error in finding merchant !" })
-                        resultData.userCardList = res
+                        resultData.userCardList = res.recordsets[0];
                         return cb(null);
                     })
+                
             },
             function (cb) {
-                CardModel.count({ userId: req.body.userId })
-                    .exec(function (err, res) {
+                const request = new mssql.Request()
+                request.query(
+                    request.template`SELECT COUNT(*) AS NumberOfProducts FROM card where userId = ${req.body.userId};`,
+                    function (err, res) {
                         if (err || !res)
-                            return cb({ statusCode: statusCode.badRequest, message: "error in counting merchant !" })
-                        resultData.count = res;
+                            return cb({ statusCode: statusCode.badRequest, message: "error in finding merchant !" })
+                        resultData.count = res.recordsets[0][0].NumberOfProducts;
                         return cb(null);
                     })
+                
             }
         ],
             function (err) {

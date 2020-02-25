@@ -25,11 +25,48 @@ const options = {
     connectTimeoutMS: 10000, // Give up initial connection after 10 seconds
     socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
 };
-mongoose.connect(mongoDB, options);
 mongoose.Promise = global.Promise;
-const db = mongoose.connection;
 
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+const dbConfig = {
+    server:'localhost',
+    port:1433,
+    user:'sa',
+    password:'myPassword123',
+    database:'hiddenholiday',
+    "options": {
+        "encrypt": true,
+        "enableArithAbort": true
+        },
+}
+
+const mssql = require('mssql');
+
+mssql.connect(dbConfig).then(pool => {
+    if(pool._connecting){
+        console.log("Connecting to the sql server database ....");        
+    }
+    if(pool._connected)
+    {
+        app.listen(port, () => {
+            console.log('*******************************************************');
+            console.log("sql server database is connected.");
+
+            console.log("---------------------------------");
+            console.log('Server is up and running on port numner ' + port);
+            console.log('*******************************************************');
+        });
+    }
+    return pool;
+}).catch(function(err){
+    console.log('*******************************************************');
+    console.log("Fail to connect to the SQL server database .");
+    console.log('*******************************************************');
+    console.log(err);
+    
+})
+// mongoose.connect(mongoDB, options);
+// const db = mongoose.connection;
+// db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
@@ -54,9 +91,3 @@ app.use('/transactions', transactionRoutes);
 app.use('/cards', cardRoutes);
 
 let port = 3000;
-
-app.listen(port, () => {
-    console.log('*******************************************************');
-    console.log('Server is up and running on port numner ' + port);
-    console.log('*******************************************************');
-});
